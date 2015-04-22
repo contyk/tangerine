@@ -147,30 +147,34 @@ sub extract {
     return $ae->files;
 }
 
+sub analyzedir {
+    my $dir = shift;
+    my $olddir = getcwd();
+    chdir $dir;
+    my @meta = analyze(gatherfiles(getcwd()));
+    chdir $olddir;
+    return @meta
+}
+
+sub analyzearchive {
+    my $archive = shift;
+    my $olddir = getcwd();
+    my $tmpdir = File::Temp->newdir('tangerine-XXXXXX',
+        DIR => File::Spec->tmpdir());
+    my $files = extract($archive, $tmpdir->dirname) or exit 100;
+    chdir File::Spec->catfile($tmpdir->dirname, $files->[0]);
+    my @meta = analyze(gatherfiles(getcwd()));
+    chdir $olddir;
+    return @meta
+}
+
 sub run {
     init();
     if ($flags{diff}) {
         # FIXME: This doesn't work yet; it's just for dev testing
-        # This seems to work
-        # We need to check if it's an archive or a directory, though
-        # Make it so you call some simple functions doing these tasks
-        my $dir = getcwd();
-        my $tmpdir = File::Temp->newdir('tangerine-XXXXXX', DIR => File::Spec->tmpdir());
-        my $files;
         my (@m1, @m2);
-        $files = extract($ARGV[0], $tmpdir->dirname) or exit 100;
-        chdir File::Spec->catfile($tmpdir->dirname, $files->[0]);
-        print getcwd()."\n";
-        @m1 = analyze(gatherfiles(getcwd()));
-        chdir $dir;
-        $tmpdir->DESTROY;
-        $tmpdir = File::Temp->newdir('tangerine-XXXXXX', DIR => File::Spec->tmpdir());
-        $files = extract($ARGV[1], $tmpdir->dirname) or exit 101;
-        chdir File::Spec->catfile($tmpdir->dirname, $files->[0]);
-        print getcwd()."\n";
-        @m2 = analyze(gatherfiles(getcwd()));
-        chdir $dir;
-        $tmpdir->DESTROY;
+        @m1 = -d $ARGV[0] ? analyzedir($ARGV[0]) : analyzearchive($ARGV[0]);
+        @m2 = -d $ARGV[1] ? analyzedir($ARGV[1]) : analyzearchive($ARGV[1]);
         print "Meta one: ".scalar(@m1)."\n";
         print "Meta two: ".scalar(@m2)."\n";
     } else {
