@@ -4,7 +4,6 @@ use warnings;
 use App::Tangerine;
 
 App::Tangerine->run;
-1;
 
 =encoding utf8
 
