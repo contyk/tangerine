@@ -3,6 +3,8 @@ package App::Tangerine;
 use 5.010;
 use strict;
 use warnings;
+use App::Tangerine::Metadata;
+
 use Archive::Extract;
 use Cwd;
 use File::Find::Rule;
