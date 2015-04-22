@@ -1,5 +1,5 @@
 package App::Tangerine;
-# ABSTRACT: Examine perl files and report dependency metadata
+# ABSTRACT: Perl dependency metadata tool
 use 5.010;
 use strict;
 use warnings;

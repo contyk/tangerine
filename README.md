@@ -1,5 +1,5 @@
-tangerine - Examine perl files and report dependency metadata
--------------------------------------------------------------
+tangerine - Perl dependency metadata tool
+-----------------------------------------
 
 This utility attempts to examine and analyze perl files, directories or
 perl distribution archives, reporting provided modules, and compile-time

@@ -10,7 +10,7 @@ App::Tangerine->run;
 
 =head1 NAME
 
-tangerine - Examine perl files and report dependency metadata
+tangerine - Perl dependency metadata tool
 
 =head1 SYNOPSIS
 
