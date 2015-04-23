@@ -185,7 +185,6 @@ sub run {
         @m1 = -d $ARGV[0] ? analyzedir($ARGV[0]) : analyzearchive($ARGV[0]);
         @m2 = -d $ARGV[1] ? analyzedir($ARGV[1]) : analyzearchive($ARGV[1]);
         my $lc = List::Compare->new(\@m1, \@m2);
-        print "Ran the difference, so now...\n";
         @m1 = map { assemblemd($_) } $lc->get_unique;
         @m2 = map { assemblemd($_) } $lc->get_complement;
         my @files;
