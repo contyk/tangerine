@@ -12,6 +12,7 @@ use File::Find::Rule::Perl;
 use File::Temp;
 use File::Spec;
 use Getopt::Long;
+use List::Compare;
 use MCE::Map;
 use Pod::Usage;
 use Tangerine;
@@ -44,15 +45,20 @@ sub init {
             -exitval => 2,
             %p2uargs)
     }
+    if ($flags{diff} && !(-e $ARGV[0] && -e $ARGV[1])) {
+        pod2usage(-message => "Cannot compute difference: No such file or directory.\n",
+            -exitval => 3,
+            %p2uargs)
+    }
     if ($flags{mode} &&
         $flags{mode} !~ m/^(compile|u(se)?|runtime|r(eq)?|package|p(rov)?|a(ll)?)$/) {
         pod2usage(-message => "Incorrect mode specified.\n",
-            -exitval => 3,
+            -exitval => 4,
             %p2uargs)
     }
     if ($flags{jobs} && $flags{jobs} !~ m/^(auto|\d+)$/) {
         pod2usage(-message => "The number of jobs must be a positive numeric value.\n",
-            -exitval => 4,
+            -exitval => 5,
             %p2uargs)
     }
     if ($flags{help}) {
@@ -134,6 +140,10 @@ sub gatherfiles {
     @files
 }
 
+sub sortmetadata {
+    ...
+}
+
 sub extract {
     my ($archive, $destination) = @_;
     my $ae = Archive::Extract->new(archive => $archive);
@@ -151,7 +161,7 @@ sub analyzedir {
     my $dir = shift;
     my $olddir = getcwd();
     chdir $dir;
-    my @meta = analyze(gatherfiles(getcwd()));
+    my @meta = analyze(gatherfiles(File::Spec->canonpath('./')));
     chdir $olddir;
     return @meta
 }
@@ -163,7 +173,7 @@ sub analyzearchive {
         DIR => File::Spec->tmpdir());
     my $files = extract($archive, $tmpdir->dirname) or exit 100;
     chdir File::Spec->catfile($tmpdir->dirname, $files->[0]);
-    my @meta = analyze(gatherfiles(getcwd()));
+    my @meta = analyze(gatherfiles(File::Spec->canonpath('./')));
     chdir $olddir;
     return @meta
 }
@@ -171,12 +181,30 @@ sub analyzearchive {
 sub run {
     init();
     if ($flags{diff}) {
-        # FIXME: This doesn't work yet; it's just for dev testing
         my (@m1, @m2);
         @m1 = -d $ARGV[0] ? analyzedir($ARGV[0]) : analyzearchive($ARGV[0]);
         @m2 = -d $ARGV[1] ? analyzedir($ARGV[1]) : analyzearchive($ARGV[1]);
-        print "Meta one: ".scalar(@m1)."\n";
-        print "Meta two: ".scalar(@m2)."\n";
+        my $lc = List::Compare->new(\@m1, \@m2);
+        print "Ran the difference, so now...\n";
+        @m1 = map { assemblemd($_) } $lc->get_unique;
+        @m2 = map { assemblemd($_) } $lc->get_complement;
+        my @files;
+        {
+            my %tmpfiles;
+            $tmpfiles{$_->file} = 1 for (@m1, @m2);
+            @files = keys %tmpfiles
+        }
+        for my $file (sort @files) {
+            print $file."\n";
+            for (@m1) {
+                print "\t- ".formattype($_->type).' '.$_->name."\n"
+                    if $_->file eq $file
+            }
+            for (@m2) {
+                print "\t+ ".formattype($_->type).' '.$_->name."\n"
+                    if ($_->file eq $file);
+            }
+        }
     } else {
         my @meta = analyze(gatherfiles(@ARGV));
         if ($flags{files}) {
@@ -237,6 +265,11 @@ sub formattype {
     return 'PACKAGE' if $type eq 'p';
     return 'COMPILE' if $type eq 'c';
     return 'RUNTIME' if $type eq 'r';
+}
+
+sub assemblemd {
+    my ($t, $n, $f) = split /\0/, shift;
+    App::Tangerine::Metadata->new(type => $t, name => $n, file => $f)
 }
 
 1;
