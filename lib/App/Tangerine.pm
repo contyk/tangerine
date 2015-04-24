@@ -86,12 +86,9 @@ sub finish {
 }
 
 sub adjustmode {
-    no warnings 'uninitialized';
-    if ($Tangerine::VERSION < 0.15) {
-        $flags{mode} = 'u' if $flags{mode} =~ m/^(compile|use)$/;
-        $flags{mode} = 'r' if $flags{mode} =~ m/^(runtime|req)$/;
-        $flags{mode} = 'p' if $flags{mode} =~ m/^(package|prov)$/;
-    }
+    $flags{mode} = 'u' if $flags{mode} =~ m/^(compile|u(se)?)$/;
+    $flags{mode} = 'r' if $flags{mode} =~ m/^(runtime|r(eq)?)$/;
+    $flags{mode} = 'p' if $flags{mode} =~ m/^(package|p(rov)?)$/;
 }
 
  
@@ -138,10 +135,6 @@ sub gatherfiles {
         }
     }
     @files
-}
-
-sub sortmetadata {
-    ...
 }
 
 sub extract {
@@ -291,3 +284,38 @@ sub sortmd {
 }
 
 1;
+
+__END__
+
+=pod
+
+=encoding utf8
+
+=head1 NAME
+
+App::Tangerine - Perl dependency metadata tool
+
+=head1 SYNOPSIS
+
+  use App::Tangerine;
+  App::Tangerine->run
+
+=head1 DESCRIPTION
+
+A perl dependency metadata reporting tool built on top of Tangerine.
+
+=head1 SEE ALSO
+
+L<tangerine>, L<Tangerine>
+
+=head1 AUTHOR
+
+Petr Šabata <contyk@redhat.com>
+
+=head1 COPYRIGHT AND LICENSE
+
+Copyright (c) 2014-2015 Petr Šabata
+
+See LICENSE for licensing details.
+
+=cut
