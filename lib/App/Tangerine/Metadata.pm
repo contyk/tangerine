@@ -3,7 +3,8 @@ use strict;
 use warnings;
 use overload
     '""' => sub {
-        return $_[0]->type."\0".$_[0]->name."\0".$_[0]->file
+        no warnings 'uninitialized';
+        return $_[0]->type."\0".$_[0]->name."\0".$_[0]->version."\0".$_[0]->file
     },
     'cmp' => sub {
         my ($self, $other) = @_;

@@ -195,12 +195,20 @@ sub run {
         }
         for my $file (sort @files) {
             print $file."\n";
-            for (@m1) {
-                print "\t- ".formattype($_->type).' '.$_->name."\n"
+            for (sortmd(undef, @m1)) {
+                print "\t- ".
+                    formattype($_->type).
+                    ' '.$_->name.
+                    ($_->version ? ' ['.$_->version.']' : '').
+                    "\n"
                     if $_->file eq $file
             }
-            for (@m2) {
-                print "\t+ ".formattype($_->type).' '.$_->name."\n"
+            for (sortmd(undef, @m2)) {
+                print "\t+ ".
+                    formattype($_->type).
+                    ' '.$_->name.
+                    ($_->version ? ' ['.$_->version.']' : '').
+                    "\n"
                     if ($_->file eq $file);
             }
         }
@@ -208,14 +216,7 @@ sub run {
         my @meta = analyze(gatherfiles(@ARGV));
         if ($flags{files}) {
             my $lastfile = '';
-            for my $md (sort {
-                lc($a->file) cmp lc($b->file) ||
-                ($a->type eq 'p' ? -1 :
-                ($b->type eq 'p' ? 1 :
-                $a->type cmp $b->type)) ||
-                lc($a->name) cmp lc($b->name) ||
-                $a->line <=> $b->line
-                } @meta) {
+            for my $md (sortmd('file', @meta)) {
                 if ($md->file ne $lastfile) {
                     print $md->file."\n";
                     $lastfile = $md->file
@@ -230,14 +231,7 @@ sub run {
         } else {
             my $lastname = '';
             my $skip = '';
-            for my $md (sort {
-                lc($a->name) cmp lc($b->name) ||
-                ($a->type eq 'p' ? -1 :
-                ($b->type eq 'p' ? 1 :
-                $a->type cmp $b->type)) ||
-                lc($a->file) cmp lc($b->file) ||
-                $a->line <=> $b->line
-                } @meta) {
+            for my $md (sortmd('name', @meta)) {
                 next if $md->name eq $skip;
                 if ($md->name ne $lastname) {
                     $lastname = $md->name;
@@ -267,8 +261,33 @@ sub formattype {
 }
 
 sub assemblemd {
-    my ($t, $n, $f) = split /\0/, shift;
-    App::Tangerine::Metadata->new(type => $t, name => $n, file => $f)
+    my ($t, $n, $v, $f) = split /\0/, shift;
+    App::Tangerine::Metadata->new(type => $t, name => $n, version => $v, file => $f)
+}
+
+sub sortmd {
+    my $by = shift;
+    no warnings 'uninitialized';
+    sort {
+        my (@first, @second);
+        if ($by eq 'name') {
+            $first[0] = lc($a->name);
+            $first[1] = lc($b->name);
+            $second[0] = lc($a->file);
+            $second[0] = lc($b->file)
+        } elsif ($by eq 'file') {
+            $first[0] = lc($a->file);
+            $first[1] = lc($b->file);
+            $second[0] = lc($a->name);
+            $second[0] = lc($b->name)
+        }
+        $first[0] cmp $first[1] ||
+        ($a->type eq 'p' ? -1 :
+        ($b->type eq 'p' ? 1 :
+        $a->type cmp $b->type)) ||
+        $second[0] cmp $second[1] ||
+        $a->line <=> $b->line
+    } @_
 }
 
 1;
