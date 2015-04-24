@@ -1,0 +1,9 @@
+0.15 2015-04-24
+
+ - Split from Tangerine
+ - Complete rewrite for readability and possible future hacking
+ - Clean and fast!
+ - The output is slightly different now
+ - Added support for parallel processing via MCE, see the -j option
+ - Added support for diffs (dirs and tarballs), see the -d option
+ - Added proper documentation
