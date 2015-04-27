@@ -267,12 +267,12 @@ sub sortmd {
             $first[0] = lc($a->name);
             $first[1] = lc($b->name);
             $second[0] = lc($a->file);
-            $second[0] = lc($b->file)
+            $second[1] = lc($b->file)
         } elsif ($by eq 'file') {
             $first[0] = lc($a->file);
             $first[1] = lc($b->file);
             $second[0] = lc($a->name);
-            $second[0] = lc($b->name)
+            $second[1] = lc($b->name)
         }
         $first[0] cmp $first[1] ||
         ($a->type eq 'p' ? -1 :
