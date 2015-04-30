@@ -166,7 +166,7 @@ sub analyzearchive {
     my $tmpdir = File::Temp->newdir('tangerine-XXXXXX',
         DIR => File::Spec->tmpdir());
     my $files = extract($archive, $tmpdir->dirname) or exit 100;
-    chdir File::Spec->catdir($tmpdir->dirname, dirname($files->[0]));
+    chdir File::Spec->catdir($tmpdir->dirname, (fileparse($files->[0]))[1]);
     my @meta = analyze(gatherfiles(File::Spec->canonpath('./')));
     chdir $olddir;
     return @meta
