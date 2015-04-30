@@ -7,6 +7,7 @@ use App::Tangerine::Metadata;
 
 use Archive::Extract;
 use Cwd;
+use File::Basename;
 use File::Find::Rule;
 use File::Find::Rule::Perl;
 use File::Temp;
@@ -165,7 +166,7 @@ sub analyzearchive {
     my $tmpdir = File::Temp->newdir('tangerine-XXXXXX',
         DIR => File::Spec->tmpdir());
     my $files = extract($archive, $tmpdir->dirname) or exit 100;
-    chdir File::Spec->catfile($tmpdir->dirname, $files->[0]);
+    chdir File::Spec->catdir($tmpdir->dirname, dirname($files->[0]));
     my @meta = analyze(gatherfiles(File::Spec->canonpath('./')));
     chdir $olddir;
     return @meta
