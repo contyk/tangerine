@@ -1,3 +1,8 @@
+0.17 2015-04-30
+
+ - Make sure we chdir into a directory even if there isn't one in the
+   tarball, thanks to Paul Howarth
+
 0.16 2015-04-27
 
  - Fix a sorting bug
