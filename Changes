@@ -1,3 +1,7 @@
+0.18 2015-04-30
+
+ - Fix a regression introduced in the previous release
+
 0.17 2015-04-30
 
  - Make sure we chdir into a directory even if there isn't one in the
