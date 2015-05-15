@@ -1,3 +1,9 @@
+0.20 2015-05-15
+
+- Added [GithubMeta] to dist.ini, so the repo will be listed in the
+  dist metadata, and also [MetaJSON], so the release will include a
+  META.json file.
+
 0.19 2015-05-04
 
  - Yet another improvement/bugfix for the archive diff feature

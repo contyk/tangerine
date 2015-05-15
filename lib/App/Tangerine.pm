@@ -310,6 +310,10 @@ A perl dependency metadata reporting tool built on top of Tangerine.
 
 L<tangerine>, L<Tangerine>
 
+=head1 REPOSITORY
+
+L<https://github.com/contyk/tangerine>
+
 =head1 AUTHOR
 
 Petr Šabata <contyk@redhat.com>
