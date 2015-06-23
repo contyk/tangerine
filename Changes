@@ -1,3 +1,9 @@
+0.22 2015-06-23
+
+- Revert the previous change.  We don't want to list
+  pragmas at the end.  Inline:: grouping needs to be handled
+  differently, preferrably in Tangerine itself.
+
 0.21 2015-06-23
 
 - Don't convert module and file names to lowercase before sorting
