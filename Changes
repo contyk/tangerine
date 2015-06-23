@@ -1,3 +1,8 @@
+0.21 2015-06-23
+
+- Don't convert module and file names to lowercase before sorting
+  them.  There's no reason for it and it messes Inline::* groups.
+
 0.20 2015-05-15
 
 - Added [GithubMeta] to dist.ini, so the repo will be listed in the

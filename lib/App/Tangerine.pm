@@ -266,15 +266,15 @@ sub sortmd {
     sort {
         my (@first, @second);
         if ($by eq 'name') {
-            $first[0] = lc($a->name);
-            $first[1] = lc($b->name);
-            $second[0] = lc($a->file);
-            $second[1] = lc($b->file)
+            $first[0] = $a->name;
+            $first[1] = $b->name;
+            $second[0] = $a->file;
+            $second[1] = $b->file
         } elsif ($by eq 'file') {
-            $first[0] = lc($a->file);
-            $first[1] = lc($b->file);
-            $second[0] = lc($a->name);
-            $second[1] = lc($b->name)
+            $first[0] = $a->file;
+            $first[1] = $b->file;
+            $second[0] = $a->name;
+            $second[1] = $b->name
         }
         $first[0] cmp $first[1] ||
         ($a->type eq 'p' ? -1 :
