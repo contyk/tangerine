@@ -1,4 +1,5 @@
 package App::Tangerine;
+
 # ABSTRACT: Perl dependency metadata tool
 use 5.010;
 use strict;
