@@ -35,7 +35,7 @@ are considered.
 
 =item B<--compact|-c>
 
-Do not list dependencies provides by the examined set.
+Do not list dependencies provided by the examined set.
 
 =item B<--diff|-d FOO BAR>
 
